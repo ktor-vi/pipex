@@ -71,7 +71,7 @@ int	main(int argc, char **argv, char **envp)
 	file[0] = open(argv[1], O_RDONLY);
 	if (file[0] == -1)
 		return (1);
-	file[1] = open(argv[4], O_RDWR);
+	file[1] = open(argv[4], O_RDWR | O_CREAT, 0644);
 	if (pipe(fd) == -1 || argc == 1)
 		exit(1);
 	pid[0] = fork();
@@ -85,7 +85,7 @@ int	main(int argc, char **argv, char **envp)
 	if (pid[1] == 0)
 		second_process(file[1], fd, argv[3], envp);
 	close_all(fd, file);
-	waitpid(pid1, &status, 0);
-	waitpid(pid2, &status, 0);
+	waitpid(pid[0], &status, 0);
+	waitpid(pid[1], &status, 0);
 	return (WEXITSTATUS(status));
 }
