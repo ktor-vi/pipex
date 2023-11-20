@@ -12,7 +12,7 @@
 
 #include "../includes/pipex.h"
 
-void	child_process(int file, int *fd, char *arg, char **envp)
+void	first_process(int file, int *fd, char *arg, char **envp)
 {
 	char	**cmd;
 	char	*path;
@@ -33,7 +33,7 @@ void	child_process(int file, int *fd, char *arg, char **envp)
 	free(path);
 }
 
-void	parent_process(int file, int *fd, char *arg, char **envp)
+void	second_process(int file, int *fd, char *arg, char **envp)
 {
 	char	**cmd;
 	char	*path;
@@ -65,24 +65,27 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
 	int		file[2];
-	pid_t	pid;
-	pid_t	pid2;
+	pid_t	pid[2];
 	int		status;
 
 	file[0] = open(argv[1], O_RDONLY);
+	if (file[0] == -1)
+		return (1);
 	file[1] = open(argv[4], O_RDWR);
 	if (pipe(fd) == -1 || argc == 1)
 		exit(1);
-	pid = fork();
-	if (pid < 0)
+	pid[0] = fork();
+	if (pid[0] < 0)
 		exit(1);
-	if (pid == 0)
-		child_process(file[0], fd, argv[2], envp);
-	pid2 = fork();
-	if (pid2 < 0)
+	if (pid[0] == 0)
+		first_process(file[0], fd, argv[2], envp);
+	pid[1] = fork();
+	if (pid[1] < 0)
 		exit(1);
-	if (pid2 == 0)
-		parent_process(file[1], fd, argv[3], envp);
+	if (pid[1] == 0)
+		second_process(file[1], fd, argv[3], envp);
+	close_all(fd, file);
+	waitpid(pid1, &status, 0);
 	waitpid(pid2, &status, 0);
 	return (WEXITSTATUS(status));
 }
