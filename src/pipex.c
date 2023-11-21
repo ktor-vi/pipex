@@ -24,7 +24,7 @@ void	first_process(int file, int *fd, char *arg, char **envp)
 	close(fd[0]);
 	close(file);
 	close(fd[1]);
-	if (execve(path, cmd, NULL) == -1)
+	if (execve(path, cmd, envp) == -1)
 	{
 		ft_putstr_fd("pipex: command not found\n", 2);
 		exit(127);
@@ -45,12 +45,13 @@ void	second_process(int file, int *fd, char *arg, char **envp)
 	close(fd[1]);
 	close(file);
 	close(fd[0]);
-	if (execve(path, cmd, NULL) == -1)
+	if (execve(path, cmd, envp) == -1)
 	{
-		ft_putstr_fd("parentp: command not found\n", 2);
+		ft_putstr_fd("pipex: command not found\n", 2);
 		exit(127);
 	}
 	clear_tab(cmd);
+	free(path);
 }
 
 void	close_all(int *fd, int *file)
@@ -70,8 +71,8 @@ int	main(int argc, char **argv, char **envp)
 
 	file[0] = open(argv[1], O_RDONLY);
 	if (file[0] == -1)
-		return (1);
-	file[1] = open(argv[4], O_RDWR | O_CREAT, 0644);
+		return (write(2, "pipex: file1 not found\n", 23), 1);
+	file[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipe(fd) == -1 || argc == 1)
 		exit(1);
 	pid[0] = fork();
