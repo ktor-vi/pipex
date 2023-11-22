@@ -53,10 +53,7 @@ char	*get_cmdpath(char **cmd, char **envp)
 		temp_env = ft_strjoin(envs[j], "/");
 		temp_env = ft_strjoin(temp_env, cmd[0]);
 		if (access(temp_env, X_OK) == 0)
-		{	
-			// clear_tab(envs);
 			return (temp_env);
-		}
 		free(temp_env);
 		j++;
 	}

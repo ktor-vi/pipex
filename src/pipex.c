@@ -45,7 +45,6 @@ void	second_process(int file, int *fd, char *arg, char **envp)
 	if (!path)
 	{
 		ft_putstr_fd("pipex: command not found\n", 2);
-		// clear_tab(cmd);
 		exit(127);
 	}
 	dup2(file, STDOUT_FILENO);
