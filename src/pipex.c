@@ -19,16 +19,18 @@ void	first_process(int file, int *fd, char *arg, char **envp)
 
 	cmd = parse_arg(arg);
 	path = get_cmdpath(cmd, envp);
+	if (!path)
+	{
+		ft_putstr_fd("pipex: command not found\n", 2);
+		clear_tab(cmd);
+		exit(127);
+	}
 	dup2(file, STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);
 	close(file);
 	close(fd[1]);
-	if (execve(path, cmd, envp) == -1)
-	{
-		ft_putstr_fd("pipex: command not found\n", 2);
-		exit(127);
-	}
+	execve(path, cmd, envp);
 	clear_tab(cmd);
 	free(path);
 }
@@ -40,16 +42,18 @@ void	second_process(int file, int *fd, char *arg, char **envp)
 
 	cmd = parse_arg(arg);
 	path = get_cmdpath(cmd, envp);
+	if (!path)
+	{
+		ft_putstr_fd("pipex: command not found\n", 2);
+		// clear_tab(cmd);
+		exit(127);
+	}
 	dup2(file, STDOUT_FILENO);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[1]);
 	close(file);
 	close(fd[0]);
-	if (execve(path, cmd, envp) == -1)
-	{
-		ft_putstr_fd("pipex: command not found\n", 2);
-		exit(127);
-	}
+	execve(path, cmd, envp);
 	clear_tab(cmd);
 	free(path);
 }
@@ -71,9 +75,9 @@ int	main(int argc, char **argv, char **envp)
 
 	file[0] = open(argv[1], O_RDONLY);
 	if (file[0] == -1)
-		return (write(2, "pipex: file1 not found\n", 23), 1);
+		return (ft_putstr_fd("pipex: infile not found", 2), 1);
 	file[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (pipe(fd) == -1 || argc == 1)
+	if (pipe(fd) == -1 || argc != 5)
 		exit(1);
 	pid[0] = fork();
 	if (pid[0] < 0)

@@ -9,7 +9,7 @@ INC = includes/pipex.h
 
 CC = cc
 
-FLAGS =  -Wall -Wextra -Werror
+FLAGS = -g  -Wall -Wextra -Werror 
 
 OBJ = $(SRC:.c=.o)
 
@@ -22,7 +22,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	@make -C $(LIBFT_DIR)
 	@cp $(LIBFT_DIR)/libft.a .
-	$(CC) $(CFLAGS) $(OBJ) libft.a  -o $@ 
+	$(CC) $(FLAGS) $(OBJ) libft.a -o $@ 
 	@rm libft.a
 
 %.o: %.c $(INC)
